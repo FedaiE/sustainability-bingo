@@ -344,16 +344,14 @@ const POOL = [
   "Wind\nEnergy","Green\nHydrogen","Food\nWaste","Smart\nGrid",
   "Carbon\nNeutrality","Satoyama\n里山","Energy\nEfficiency","E-Mobility","Ocean\nProtection",
   "Deforestation","Japan\nOvershoot\n~May 12","1.5°C\nTarget","CSRD\nReport","Green\nBuilding",
-  "Kaizen\nfor Climate","Water\nScarcity","Fast\nFashion","Scope 1\n2\n3\nEmissions","Science-Based\nTargets",
+  "Kaizen\nfor Climate","Water\nScarcity","Fast\nFashion","Scope 1\n2 3\nEmissions","Science-Based\nTargets",
   "Geothermal\nEnergy","DEGREE\nFramework","Carbon\nOffset","LCA\nAnalysis","ESG\nReporting",
   "Supply Chain\nTransparency","Heat\nPump","Battery\nStorage","Micro-\nplastics","Urban\nFarming",
   "Green\nFinance","Overshoot\nDay 1971","Resource\nOveruse","Biomass\nEnergy","Climate\nAction",
   "Planetary\nBoundaries","Zero Waste\nJapan","Net Zero\n2030","Decarbonization","Emissions\nTrading",
-  "🍀 Lucky\nDraw","Osagari","People\ncentricity","Cybersecurity","Robust\nEco\nDesign","Inclusion",
+  "🍀 Lucky\nDraw","Osagari","People\nCentricity","Cybersecurity","Robust\nEco Design","Inclusion",
   "SieEV100","Learning"
 ];
-
-const LUCKY = "🍀 Lucky\nDraw";
 let cells = [];
 let playerName = '';
 
@@ -405,13 +403,17 @@ document.getElementById('nameInput').addEventListener('keydown', e => {
 });
 
 function generateCard(seed) {
-  // Always include Lucky Draw, shuffle the rest
+  const LUCKY = "🍀 Lucky\nDraw";
+  const hasLucky = (Math.abs(seed) % 10) < 4; // 40% chance, deterministic per name
   const rest = POOL.filter(t => t !== LUCKY);
-  const picked = shuffle(rest, seed).slice(0, 24);
-  // Insert Lucky Draw at a seed-determined position
-  const luckyPos = Math.abs(seed) % 25;
-  picked.splice(luckyPos, 0, LUCKY);
-  return picked;
+  if (hasLucky) {
+    const picked = shuffle(rest, seed).slice(0, 24);
+    const luckyPos = Math.abs(seed) % 25;
+    picked.splice(luckyPos, 0, LUCKY);
+    return picked;
+  } else {
+    return shuffle(rest, seed).slice(0, 25);
+  }
 }
 
 function renderCard(seed) {
@@ -434,7 +436,7 @@ function renderCard(seed) {
   const items = generateCard(seed);
   items.forEach((text, i) => {
     const c = document.createElement('div');
-    const isLucky = text === LUCKY;
+    const isLucky = text === "🍀 Lucky\nDraw";
     c.className = 'cell' + (isLucky ? ' lucky' : '');
     c.textContent = text;
     c.onclick = () => toggleCell(c);
